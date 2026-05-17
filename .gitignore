@@ -1,0 +1,100 @@
+# ============================================================
+# Urban Subsidence Watcher — .gitignore
+# ============================================================
+
+# Environment & secrets
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+.installed.cfg
+lib/
+lib64/
+parts/
+var/
+sdist/
+wheels/
+share/python-wheels/
+*.manifest
+*.spec
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Data (large files — use DVC or Git LFS instead)
+data/raw/
+data/processed/
+data/insar/
+data/subsidence/
+data/features/
+data/models/
+data/forecasts/
+data/validation/
+data/dashboard/
+data/exports/
+data/edge/
+data/logs/
+data/self_update.log
+*.tif
+*.tiff
+*.h5
+*.nc
+*.zip
+*.safe
+*.SAFE
+*.dim
+*.data/
+
+# Notebooks — outputs only
+notebooks/.ipynb_checkpoints/
+notebooks/**/.ipynb_checkpoints/
+
+# TensorBoard
+runs/
+tb_logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Docs build
+docs/_build/
+site/
+
+# Docker
+.dockerignore
+
+# SNAP / snappy
+*.dim
+*.data
+
+# Compiled models (tracked separately via DVC/LFS if needed)
+*.onnx
+*.tflite
+*.pt
+*.pth

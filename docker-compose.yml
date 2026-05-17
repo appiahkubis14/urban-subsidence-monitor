@@ -1,0 +1,74 @@
+# ============================================================
+# Urban Subsidence Watcher — Docker Compose
+# Usage: docker-compose up
+# ============================================================
+
+version: "3.9"
+
+services:
+
+  # ── Main pipeline ──────────────────────────────────────
+  subsidence-watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        INSTALL_SNAP: "false"   # set "true" to install ESA SNAP (~2 GB extra)
+    image: urban-subsidence-watcher:latest
+    container_name: subsidence-watcher
+    env_file:
+      - .env
+    volumes:
+      # Persist all outputs between runs
+      - ./data:/app/data
+      # Mount config so you can tune without rebuilding
+      - ./config.yaml:/app/config.yaml:ro
+    command: python main.py --step all --log-level INFO
+    restart: "no"
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 2G
+
+  # ── Self-update daemon (optional) ─────────────────────
+  self-update:
+    image: urban-subsidence-watcher:latest
+    container_name: subsidence-self-update
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./config.yaml:/app/config.yaml:ro
+    command: python scripts/self_update.py --config config.yaml --daemon
+    restart: unless-stopped
+    profiles:
+      - daemon          # only starts with: docker-compose --profile daemon up
+
+  # ── JupyterLab for exploration ─────────────────────────
+  notebook:
+    image: urban-subsidence-watcher:latest
+    container_name: subsidence-notebook
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./notebooks:/app/notebooks
+      - ./config.yaml:/app/config.yaml:ro
+    command: >
+      jupyter lab
+        --ip=0.0.0.0
+        --port=8888
+        --no-browser
+        --NotebookApp.token=''
+        --NotebookApp.password=''
+        --notebook-dir=/app/notebooks
+    ports:
+      - "8888:8888"
+    profiles:
+      - notebook        # docker-compose --profile notebook up
+
+networks:
+  default:
+    name: subsidence-net
